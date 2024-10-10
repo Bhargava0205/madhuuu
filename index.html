@@ -277,6 +277,25 @@
     boxes.forEach(box => {
       box.style.pointerEvents = 'none';
     });
+
+    // After 3 seconds, hide final message and reset the state
+    setTimeout(resetToInitialState, 3000);
+  }
+
+  // Function to reset everything to the initial state
+  function resetToInitialState() {
+    finalMessage.style.display = 'none';
+    bgOverlay.style.display = 'none';
+    bgVideo.style.display = 'none';
+    bgImage.style.display = 'none';
+    videoSource.src = '';
+
+    // Hide the question container and unflip the boxes
+    questionContainer.style.display = 'none';
+    boxes.forEach(box => {
+      box.classList.remove('flipped');
+      box.style.pointerEvents = 'auto'; // Re-enable clicking
+    });
   }
 </script>
 

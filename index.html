@@ -159,38 +159,21 @@
       correctAnswer: "Hair",
       mediaType: "image",
       mediaSource: "hairr.jpeg",
-      finalMessage: "Nee Kallu naaku kastha alasyamgane parichayam ayyayiii....... Tholi parichayam the 1st impression...... nee votthaina, podavaina curly Hair ye Sooo......thats the 1st and best thing that comes into my mind when i hear your name!"
+      finalMessage: "Nee Kallu naaku kastha alasyamgane parichayam ayyayiii.......   Tholi parichayam the 1st impression...... nee votthaina, podavaina curly Hair ye Sooo......thats the 1st and best thing that comes into my mind when i hear your name!"
     },
     {
       question: "Naa Insta Password?",
       options: ["M@dh@vi26", "M@dhu@2603"],
       correctAnswer: "M@dh@vi26",
-      mediaType: "image",
-      mediaSource: "insta.jpeg",
-      finalMessage: "Ahaaaa.... andhuke nee netflix password adhe pettanuu eeeeeeeeeeeee!"
+      mediaType: "instag.jpeg",
+      mediaSource: "https://github.com/Bhargava0205/Madhavi/blob/091081b71e9a5f048cd6681731099129f18faead/insta.jpeg",
+      finalMessage: "Ahaaaa.... andhuke nee netflix password adhe pettanuu   eeeeeeeeeeeee!"
     },
-    {
-      question: "Madhavi..... do u know the score of Kundli Matching(Jathakam) out of 36?",
-      options: ["30", "19"],
-      correctAnswer: "19",
-      mediaType: "image",
-      mediaSource: "mehandi.jpeg",
-      finalMessage: "oyeeee above 16 its a good score antaaa.... but rathalu antha bnalekapothe.... ilaa gorintakuthooo andhamga marchedham!"
-    },
-    {
-      question: "Ninnu nenu piliche pilupu... nv natho aadukunetappudu?",
-      options: ["Miss Meow", "Rakshasi"],
-      correctAnswer: "Rakshasi",
-      mediaType: "image",
-      mediaSource: "rakshasi.jpeg",
-      finalMessage: "Nv nijamgaane rakshasivi..... eee jathakam loo see nee ganamu raakshasa ganame...... meee manushya ganamu!"
-    },
-    {
-      question: "Destiny Undhantaava manakiiiiiii?",
+@@ -190,119 +190,119 @@
       options: ["Yesss", "Nooooo"],
       correctAnswer: "Yesss",
       mediaType: "image",
-      mediaSource: "desteen.jpeg",
+      mediaSource: "rakshad.jpeg",
       finalMessage: "Destiny emo kaaaani i feel like all the things are aligned..... naaaku mundhu nunchi nv ante istame....But... 1 year back what are wee.. and now what are weee.... Haha.... not the destiny but trusting the Gut feelingggg!"
     },
     {
@@ -207,96 +190,101 @@
       correctAnswer: "Love",
       mediaType: "image",
       mediaSource: "destinyy.jpeg",
-      finalMessage: "Love cum Arraged aithe neekem problem undhaa?"
+      finalMessage: "Love cum Arraged aithe neekemaina problem aaa?? Hehe nee confusions poyaka neeeku nacchinappud nv okay ani strong ga nilabadu chaaalu..... M chesaina oppisthaaaaaa......!"
     },
     {
-      question: "Naa favorite place to visit with u?",
-      options: ["Kailash", "Paris"],
-      correctAnswer: "Kailash",
-      mediaType: "video",
-      mediaSource: "video1.mp4",
-      finalMessage: "Chalo neekosam kailash Yatra organise cheddham....Himalayas lo amsha une amma valla velli pooja chesukundham... Stress free ga trip avuddi"
-    },
-    {
-      question: "Any Memory u remember about us?",
-      options: ["When I first saw you", "Birthday surprise"],
-      correctAnswer: "Birthday surprise",
+      question: "What does MB Stands for ?",
+      options: ["Megabyte", "Mahesh Babu"],
+      correctAnswer: "Mahesh Babu",
       mediaType: "image",
-      mediaSource: "sun.jpeg",
-      finalMessage: "Hehe nuvvuu friends tho plan chesthe...nenu flight tickets tiskoni vachhanu....surprise annamata!"
-    }
+      mediaSource: "maheshbab 2.jpeg",
+      finalMessage: "not only mahesh babu andi..... Madhavi(M) Bhargava(M) kuda see mee mahesh babu blessings kuda unnai!"
+    },
+    {
+      question: "Will you marry me?",
+      options: ["Yes", "No"],
+      correctAnswer: "Yes",
+      mediaType: "image",
+      mediaSource: "kalasam.jpeg",
+      finalMessage: "Eveeeeeeeee.... haha ponile atlaaaasttt......  #Thelingggggggg Uhallooo"
+    },
+    // Add more for the remaining boxes as needed
   ];
 
-  // Function to handle box clicks
-  boxes.forEach((box, index) => {
-    box.addEventListener('click', () => {
-      box.classList.add('flipped');
-      displayQuestion(index);
-    });
-  });
+  // Function to reset everything back to the beginning
+  function resetPage() {
+    boxes.forEach(box => box.classList.remove('flipped'));
+    questionContainer.style.display = 'none';
+    finalMessage.style.display = 'none';
+    bgOverlay.style.display = 'none';
+    chessContainer.style.display = 'grid'; // Show the chess-patterned boxes again
 
-  // Function to display the question and options for a box
-  function displayQuestion(index) {
-    const data = boxData[index];
+    if (bgVideo) {
+      bgVideo.pause();
+      bgVideo.currentTime = 0;
+      bgVideo.style.display = 'none';
+    }
+    if (bgImage) {
+      bgImage.style.display = 'none';
+    }
+  }
+
+  // Function to display question and options for a specific box
+  function displayQuestion(boxIndex) {
+    const data = boxData[boxIndex];
+
     questionText.textContent = data.question;
     option1.textContent = data.options[0];
     option2.textContent = data.options[1];
+
+    // Handle option clicks
+    option1.onclick = () => handleAnswer(data, data.options[0]);
+    option2.onclick = () => handleAnswer(data, data.options[1]);
+
     questionContainer.style.display = 'block';
-
-    option1.onclick = () => handleAnswer(data.options[0], data);
-    option2.onclick = () => handleAnswer(data.options[1], data);
   }
 
-  // Function to handle the answer selection
-  function handleAnswer(selectedOption, data) {
-    if (selectedOption === data.correctAnswer) {
-      showFinalMessage(data.finalMessage, data);
-    } else {
-      alert("Try Again!");
-    }
-  }
-
-  // Function to display the final message and media
-  function showFinalMessage(message, data) {
-    finalMessageText.textContent = message;
+  // Function to handle the selected answer
+  function handleAnswer(data, selectedOption) {
+    questionContainer.style.display = 'none';
     finalMessage.style.display = 'block';
-    bgOverlay.style.display = 'block';
+    chessContainer.style.display = 'none'; // Hide chess boxes during the final outcome
 
-    // Show media based on media type
-    if (data.mediaType === 'video') {
+    if (selectedOption === data.correctAnswer) {
+      finalMessageText.textContent = data.finalMessage;
+      showMedia(data.mediaType, data.mediaSource);
+    } else {
+      finalMessageText.textContent = "Oops, that's not correct. Try again!";
+    }
+
+    setTimeout(() => {
+      finalMessage.style.display = 'none';
+      resetPage();
+    }, 5000);
+  }
+
+  // Function to show media (image or video)
+  function showMedia(mediaType, mediaSource) {
+    bgOverlay.style.display = 'block';
+    if (mediaType === "video") {
+      videoSource.src = mediaSource;
       bgVideo.style.display = 'block';
-      videoSource.src = data.mediaSource;
-      bgVideo.load();
       bgVideo.play();
-    } else if (data.mediaType === 'image') {
-      bgImage.src = data.mediaSource;
+    } else if (mediaType === "image") {
+      bgImage.src = mediaSource;
       bgImage.style.display = 'block';
     }
-
-    // Disable further clicks on the boxes
-    boxes.forEach(box => {
-      box.style.pointerEvents = 'none';
-    });
-
-    // After 3 seconds, hide final message and reset the state
-    setTimeout(resetToInitialState, 3000);
   }
 
-  // Function to reset everything to the initial state
-  function resetToInitialState() {
-    finalMessage.style.display = 'none';
-    bgOverlay.style.display = 'none';
-    bgVideo.style.display = 'none';
-    bgImage.style.display = 'none';
-    videoSource.src = '';
-
-    // Hide the question container and unflip the boxes
-    questionContainer.style.display = 'none';
-    boxes.forEach(box => {
-      box.classList.remove('flipped');
-      box.style.pointerEvents = 'auto'; // Re-enable clicking
+  // Flip effect and question display for the boxes
+  boxes.forEach((box, index) => {
+    box.addEventListener('click', () => {
+      box.classList.add('flipped');
+      setTimeout(() => {
+        displayQuestion(index);
+      }, 1000);
     });
-  }
+  });
 </script>
 
 </body>

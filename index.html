@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Box Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      overflow: hidden; /* Prevent scrollbars */
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 10px;
+      z-index: 2; /* Ensure it's above the background */
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      transform: rotateY(0);
+      transition: transform 0.6s;
+    }
+    .flipped {
+      transform: rotateY(180deg);
+    }
+    .question-container {
+      text-align: center;
+      display: none;
+      position: absolute;
+      top: 20%;
+      width: 80%;
+      margin: auto;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      z-index: 3;
+    }
+    .question-container p {
+      font-size: 18px;
+    }
+    .options {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .option {
+      background-color: #007BFF;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .final-message {
+      display: none;
+      text-align: center;
+      font-size: 24px;
+      color: white;
+      position: absolute;
+      top: 20%;
+      width: 80%;
+      margin: auto;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 10px;
+      z-index: 4;
+    }
+    .bg-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+      z-index: 1;
+      display: none; /* Hidden until correct answer is chosen */
+    }
+    .bg-video, .bg-image {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: 0;
+      display: none; /* Hidden until correct answer is chosen */
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="chess-container">
+  <div class="box" id="box1">1</div>
+  <div class="box" id="box2">2</div>
+  <div class="box" id="box3">3</div>
+  <div class="box" id="box4">4</div>
+  <div class="box" id="box5">5</div>
+  <div class="box" id="box6">6</div>
+  <div class="box" id="box7">7</div>
+  <div class="box" id="box8">8</div>
+  <div class="box" id="box9">9</div>
+</div>
+
+<div class="question-container" id="question">
+  <p id="question-text">Placeholder question?</p>
+  <div class="options">
+    <div class="option" id="option1"></div>
+    <div class="option" id="option2"></div>
+  </div>
+</div>
+
+<div class="final-message" id="final-message">
+  <p id="final-message-text"></p>
+</div>
+
+<!-- Background Overlay -->
+<div class="bg-overlay" id="bg-overlay"></div>
+
+<!-- Background Video or Image -->
+<video class="bg-video" id="bg-video" loop muted>
+  <source id="video-source" src="" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+<img src="" class="bg-image" id="bg-image" alt="Background Image">
+
+<script>
+  const boxes = document.querySelectorAll('.box');
+  const chessContainer = document.getElementById('chess-container');
+  const questionContainer = document.getElementById('question');
+  const questionText = document.getElementById('question-text');
+  const option1 = document.getElementById('option1');
+  const option2 = document.getElementById('option2');
+  const finalMessage = document.getElementById('final-message');
+  const finalMessageText = document.getElementById('final-message-text');
+  const bgOverlay = document.getElementById('bg-overlay');
+  const bgVideo = document.getElementById('bg-video');
+  const bgImage = document.getElementById('bg-image');
+  const videoSource = document.getElementById('video-source');
+
+  // Array to hold questions, options, correct answers, and media for each box
+  const boxData = [
+    {
+      question: "What i like the most in u?",
+      options: ["Hair", "Eyes"],
+      correctAnswer: "Hair",
+      mediaType: "image",
+      mediaSource: "hairr.jpeg",
+      finalMessage: "Nee Kallu naaku kastha alasyamgane parichayam ayyayiii....... Tholi parichayam the 1st impression...... nee votthaina, podavaina curly Hair ye Sooo......thats the 1st and best thing that comes into my mind when i hear your name!"
+    },
+    {
+      question: "Naa Insta Password?",
+      options: ["M@dh@vi26", "M@dhu@2603"],
+      correctAnswer: "M@dh@vi26",
+      mediaType: "image",
+      mediaSource: "insta.jpeg",
+      finalMessage: "Ahaaaa.... andhuke nee netflix password adhe pettanuu eeeeeeeeeeeee!"
+    },
+    {
+      question: "Madhavi..... do u know the score of Kundli Matching(Jathakam) out of 36?",
+      options: ["30", "19"],
+      correctAnswer: "19",
+      mediaType: "image",
+      mediaSource: "mehandi.jpeg",
+      finalMessage: "oyeeee above 16 its a good score antaaa.... but rathalu antha bnalekapothe.... ilaa gorintakuthooo andhamga marchedham!"
+    },
+    {
+      question: "Ninnu nenu piliche pilupu... nv natho aadukunetappudu?",
+      options: ["Miss Meow", "Rakshasi"],
+      correctAnswer: "Rakshasi",
+      mediaType: "image",
+      mediaSource: "rakshasi.jpeg",
+      finalMessage: "Nv nijamgaane rakshasivi..... eee jathakam loo see nee ganamu raakshasa ganame...... meee manushya ganamu!"
+    },
+    {
+      question: "Destiny Undhantaava manakiiiiiii?",
+      options: ["Yesss", "Nooooo"],
+      correctAnswer: "Yesss",
+      mediaType: "image",
+      mediaSource: "desteen.jpeg",
+      finalMessage: "Destiny emo kaaaani i feel like all the things are aligned..... naaaku mundhu nunchi nv ante istame....But... 1 year back what are wee.. and now what are weee.... Haha.... not the destiny but trusting the Gut feelingggg!"
+    },
+    {
+      question: "Nv K dramas endhuke choosthav?",
+      options: ["Romance", "Butterflies"],
+      correctAnswer: "Romance",
+      mediaType: "image",
+      mediaSource: "candid.jpeg",
+      finalMessage: "Haha.... romance is not only about intimacy..... it's more about showing the love..... intimacy may or may not last for long but showing love 90's lo kuda possible ye ( alaaa oka temple loo.... ledha oka manchi view lo nee pic baaga ravalani.....bend aithe pattese back tho goda ekkadaniki try chesthunappudu)"
+    },
+    {
+      question: "Arrange marraige or Love Marraige?",
+      options: ["Arrange", "Love"],
+      correctAnswer: "Love",
+      mediaType: "image",
+      mediaSource: "destinyy.jpeg",
+      finalMessage: "Love cum Arraged aithe neekem problem undhaa?"
+    },
+    {
+      question: "Naa favorite place to visit with u?",
+      options: ["Kailash", "Paris"],
+      correctAnswer: "Kailash",
+      mediaType: "video",
+      mediaSource: "video1.mp4",
+      finalMessage: "Chalo neekosam kailash Yatra organise cheddham....Himalayas lo amsha une amma valla velli pooja chesukundham... Stress free ga trip avuddi"
+    },
+    {
+      question: "Any Memory u remember about us?",
+      options: ["When I first saw you", "Birthday surprise"],
+      correctAnswer: "Birthday surprise",
+      mediaType: "image",
+      mediaSource: "sun.jpeg",
+      finalMessage: "Hehe nuvvuu friends tho plan chesthe...nenu flight tickets tiskoni vachhanu....surprise annamata!"
+    }
+  ];
+
+  // Function to handle box clicks
+  boxes.forEach((box, index) => {
+    box.addEventListener('click', () => {
+      box.classList.add('flipped');
+      displayQuestion(index);
+    });
+  });
+
+  // Function to display the question and options for a box
+  function displayQuestion(index) {
+    const data = boxData[index];
+    questionText.textContent = data.question;
+    option1.textContent = data.options[0];
+    option2.textContent = data.options[1];
+    questionContainer.style.display = 'block';
+
+    option1.onclick = () => handleAnswer(data.options[0], data);
+    option2.onclick = () => handleAnswer(data.options[1], data);
+  }
+
+  // Function to handle the answer selection
+  function handleAnswer(selectedOption, data) {
+    if (selectedOption === data.correctAnswer) {
+      showFinalMessage(data.finalMessage, data);
+    } else {
+      alert("Try Again!");
+    }
+  }
+
+  // Function to display the final message and media
+  function showFinalMessage(message, data) {
+    finalMessageText.textContent = message;
+    finalMessage.style.display = 'block';
+    bgOverlay.style.display = 'block';
+
+    // Show media based on media type
+    if (data.mediaType === 'video') {
+      bgVideo.style.display = 'block';
+      videoSource.src = data.mediaSource;
+      bgVideo.load();
+      bgVideo.play();
+    } else if (data.mediaType === 'image') {
+      bgImage.src = data.mediaSource;
+      bgImage.style.display = 'block';
+    }
+
+    // Disable further clicks on the boxes
+    boxes.forEach(box => {
+      box.style.pointerEvents = 'none';
+    });
+  }
+</script>
+
+</body>
+</html>
